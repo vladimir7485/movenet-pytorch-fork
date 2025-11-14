@@ -157,14 +157,26 @@ def show3Dpose(channels, ax, lcolor="#3498db", rcolor="#e74c3c", add_labels=True
 
     # Get rid of the panes (actually, make them white)
     white = (1.0, 1.0, 1.0, 0.0)
-    ax.w_xaxis.set_pane_color(white)
-    ax.w_yaxis.set_pane_color(white)
+    # Compatibility with both old and new matplotlib versions
+    try:
+        # Old matplotlib API (< 3.5)
+        ax.w_xaxis.set_pane_color(white)
+        ax.w_yaxis.set_pane_color(white)
+        ax.w_xaxis.line.set_color(white)
+        ax.w_yaxis.line.set_color(white)
+        ax.w_zaxis.line.set_color(white)
+    except (AttributeError, TypeError):
+        # New matplotlib API (>= 3.5)
+        try:
+            ax.xaxis.pane.fill = False
+            ax.yaxis.pane.fill = False
+            ax.xaxis.pane.set_edgecolor(white)
+            ax.yaxis.pane.set_edgecolor(white)
+            ax.zaxis.pane.set_edgecolor(white)
+        except (AttributeError, TypeError):
+            # If new API also fails, just continue - visualization will still work
+            pass
     # Keep z pane
-
-    # Get rid of the lines in 3d
-    ax.w_xaxis.line.set_color(white)
-    ax.w_yaxis.line.set_color(white)
-    ax.w_zaxis.line.set_color(white)
 
 
 def show2Dpose(channels, ax, lcolor="#3498db", rcolor="#e74c3c", add_labels=True):
