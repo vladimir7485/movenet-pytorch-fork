@@ -24,7 +24,7 @@ else:
 
 def main():
     model = load_model(args.model, ft_size=args.ft_size)
-    # model = model.cuda()
+    model = model.cuda()
 
     cap = cv2.VideoCapture(args.video_path)
     if not cap.isOpened():
@@ -56,9 +56,9 @@ def main():
         input_image, display_image = _process_input(frame, size=args.size)
         
         with torch.no_grad():
-            input_image = torch.Tensor(input_image) #.cuda()
+            input_image = torch.Tensor(input_image).cuda()
             kpt_with_conf = model(input_image)[0, 0, :, :]
-            kpt_with_conf = kpt_with_conf.numpy()
+            kpt_with_conf = kpt_with_conf.detach().cpu().numpy()
 
         # TODO this isn't particularly fast, use GL for drawing and display someday...
         overlay_image = draw_skel_and_kp(

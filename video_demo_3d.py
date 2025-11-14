@@ -35,8 +35,8 @@ else:
 
 def main():
     model = load_model(args.model)
-    pose_aug = load_model_pose().eval()
-    # model = model.cuda()
+    pose_aug = load_model_pose().cuda().eval()
+    model = model.cuda()
 
     cap = cv2.VideoCapture(args.video_path)
     if not cap.isOpened():
@@ -102,14 +102,14 @@ def main():
         input_image, display_image = _process_input(frame, size=args.size)
         
         with torch.no_grad():
-            input_image = torch.Tensor(input_image) #.cuda()
+            input_image = torch.Tensor(input_image).cuda()
             kpt_with_conf = model(input_image)[0, 0, :, :]
             inputs_2d = create_2d_data(kpt_with_conf) 
             outputs_3d = pose_aug(inputs_2d)
             outputs_3d = outputs_3d[:, :, :] - outputs_3d[:, :1, :]
             
-        kpt_with_conf = kpt_with_conf.numpy()
-        outputs_3d = outputs_3d[0].numpy() 
+        kpt_with_conf = kpt_with_conf.detach().cpu().numpy()
+        outputs_3d = outputs_3d[0].detach().cpu().numpy() 
 
         show3Dpose(outputs_3d, ax)
         # redraw the canvas
