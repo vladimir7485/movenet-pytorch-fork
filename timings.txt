@@ -1,0 +1,7 @@
+CPU
+Video Demo 2D: Average FPS:  101.81973984502454
+Video Demo 3D: Average FPS:  19.719914403923458
+
+GPU
+Video Demo 2D: Average FPS:  180.1583649939258
+Video Demo 3D: Average FPS:  23.523279544171466
